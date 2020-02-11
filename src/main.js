@@ -4,8 +4,18 @@ import "./styles.css";
 import $ from "jquery";
 import { Tamagotchi } from "./tamagotchi";
 
-const url =
+const urlHappy =
   "https://api.giphy.com/v1/gifs/random?api_key=NugGuaZWltD1aGOEFjEYel1ihO71FVuP&tag=cat&rating=G";
+const urlBathroom =
+  "https://api.giphy.com/v1/gifs/l3JDJ8hPoiNbAt6Uw?api_key=NugGuaZWltD1aGOEFjEYel1ihO71FVuP";
+const urlFeed =
+  "https://api.giphy.com/v1/gifs/9fuvOqZ8tbZOU?api_key=NugGuaZWltD1aGOEFjEYel1ihO71FVuP";
+const urlMed =
+  "https://api.giphy.com/v1/gifs/LPlwUTDBHZNutqFRzF?api_key=NugGuaZWltD1aGOEFjEYel1ihO71FVuP";
+
+function setBackground(imageUrl) {
+  $(`#gif`).css("background-image", "url(" + imageUrl + ")");
+}
 
 function updateStats(pet) {
   $(".stats").show();
@@ -48,6 +58,7 @@ function endGame(pet, interval) {
 function gifHide() {
   setTimeout(() => {
     $("#gif-row").slideUp();
+    $(".btn").prop("disabled", false);
   }, 3000);
 }
 
@@ -85,34 +96,65 @@ $(document).ready(function() {
   $("#med-btn").click(function(event) {
     event.preventDefault();
     pet.giveMedicine();
+    fetch(urlMed)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(jsonifiedResponse) {
+        let imageUrl = jsonifiedResponse.data.images.downsized_large.url;
+        setBackground(imageUrl);
+        $("#gif-row").slideDown();
+        $(".btn").prop("disabled", true);
+        gifHide();
+      });
   });
 
   $("#bathroom-btn").click(function(event) {
     event.preventDefault();
     pet.useToilet();
+    fetch(urlBathroom)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(jsonifiedResponse) {
+        let imageUrl = jsonifiedResponse.data.images.downsized_large.url;
+        setBackground(imageUrl);
+        $("#gif-row").slideDown();
+        $(".btn").prop("disabled", true);
+        gifHide();
+      });
   });
 
   $("#feed-btn").click(function(event) {
     event.preventDefault();
     pet.giveFood();
+    fetch(urlFeed)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(jsonifiedResponse) {
+        let imageUrl = jsonifiedResponse.data.images.downsized_large.url;
+        setBackground(imageUrl);
+        $("#gif-row").slideDown();
+        $(".btn").prop("disabled", true);
+        gifHide();
+      });
   });
 
   $("#happy-btn").click(function(event) {
     event.preventDefault();
     pet.increaseHappy();
 
-    fetch(url)
+    fetch(urlHappy)
       .then(function(response) {
         return response.json();
       })
       .then(function(jsonifiedResponse) {
         let imageUrl = jsonifiedResponse.data.image_url;
-        setBackG(imageUrl);
+        setBackground(imageUrl);
         $("#gif-row").slideDown();
+        $(".btn").prop("disabled", true);
         gifHide();
       });
-    const setBackG = function(imageUrl) {
-      $("#gif").css("background-image", "url(" + imageUrl + ")");
-    };
   });
 });
